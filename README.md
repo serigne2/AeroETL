@@ -142,10 +142,6 @@ with DAG('weather_data_pipeline', default_args=default_args, schedule_interval='
     extract_task >> transform_task >> load_task
 ```
 
-### 5. Monitoring et Notifications
-
-Le pipeline est configuré pour envoyer des notifications en cas d’échec. Si un problème survient dans une tâche, une alerte email (ou Slack si configuré) sera envoyée aux administrateurs pour garantir une intervention rapide.
-
 ## Exécution du Pipeline
 
 1. **Lancer Airflow** : Si vous utilisez une instance Airflow, assurez-vous qu’elle est configurée avec les bonnes variables d’environnement.

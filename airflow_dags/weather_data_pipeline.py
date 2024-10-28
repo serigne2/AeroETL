@@ -1,23 +1,10 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator, BranchPythonOperator
 from airflow.utils.dates import days_ago
-from job_scripts.advanced_data_extraction import fetch_weather_data
-from job_scripts.advanced_data_transformation import transform_weather_data
-from job_scripts.advanced_data_loading import load_data_to_s3, load_data_to_rds
+from job_scripts.data_extraction import fetch_weather_data
+from job_scripts.data_transformation import transform_weather_data
+from job_scripts.data_loading import load_data_to_s3, load_data_to_rds
 
-# Fonction de notification Slack pour les échecs de tâches
-def notify_slack_failure(context):
-    slack_msg = f"""
-        :red_circle: Task Failed.
-        Task: {context.get('task_instance').task_id}
-        Dag: {context.get('task_instance').dag_id}
-        """
-    failed_alert = SlackWebhookOperator(
-        task_id='slack_notification',
-        http_conn_id='slack_connection',  # Nom de la connexion Slack configurée dans Airflow
-        message=slack_msg
-    )
-    return failed_alert.execute(context=context)
 
 default_args = {
     'owner': 'airflow',
@@ -27,7 +14,7 @@ default_args = {
     'start_date': days_ago(1),
 }
 
-with DAG('enhanced_weather_data_pipeline', default_args=default_args, schedule_interval='@daily') as dag:
+with DAG('weather_data_pipeline', default_args=default_args, schedule_interval='@daily') as dag:
 
     def extract_data(**context):
         cities = ["Paris", "London", "New York"]
